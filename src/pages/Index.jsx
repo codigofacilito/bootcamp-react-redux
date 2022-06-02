@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import apiCall from '../api';
 import MealItem from "../components/MealItem";
+import { addSearchItem, fetchRecipes } from "../redux/actions/results";
 
 const Index = () => {
  const [searchText, setSearchText] = useState("");
@@ -11,10 +13,14 @@ const Index = () => {
  const [error, setError] = useState(null);
 
  const navigate = useNavigate();
+ const dispatch = useDispatch();
 
  const handleSearchClick = async () => {
   try {
    setIsLoading(true);
+   dispatch(addSearchItem(searchText));
+   dispatch(fetchRecipes(searchText));
+
    const response = await apiCall(`/search.php?s=${searchText}`);
    setSearchResults(response?.meals);
   } catch (error) {
