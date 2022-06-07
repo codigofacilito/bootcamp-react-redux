@@ -1,33 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-import apiCall from "../api";
+import { fetchMealDetail } from "../redux/actions/detail";
 
 const Meal = () => {
  const { id } = useParams();
- const [meal, setMeal] = useState({});
- const [isLoading, setIsLoading] = useState(false);
- const [error, setError] = useState({});
+ const dispatch = useDispatch();
+ const meal = useSelector(state => state.detail.data);
+ const isLoading = useSelector(state => state.detail.isLoading);
+ const error = useSelector(state => state.detail.error);
 
 
  useEffect(() => {
-  const fetchData = async () => {
-   try {
-    setIsLoading(true);
-    setError({});
-    setMeal({});
-
-    const response = await apiCall(`/lookup.php?i=${id}`);
-    setMeal(response?.meals?.[0]);
-   } catch (error) {
-    setError(error);
-   } finally {
-    setIsLoading(false);
-   }
-
-  };
-
-  fetchData();
+    dispatch(fetchMealDetail(id));
  }, [id]);
 
  if (isLoading) {
